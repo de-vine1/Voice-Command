@@ -3,12 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <title>MusicMate</title>
+    <link rel="stylesheet" href="assets\css\styles.css" />
   </head>
+
   <body>
     <h1>MusicMate</h1>
+
+    <!-- Toggle button for listening -->
+
+    <br /><br />
+
+    <div>
+      <h3>Now Playing: <span id="track-name">Asake - Dull</span></h3>
+      <!-- Progress bar for track duration -->
+      <progress id="progress-bar" value="0" max="100"></progress>
+      <p>
+        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+      </p>
+    </div>
+
+    <!-- Optional control buttons -->
+    <button onclick="nextTrack()">Next Track</button>
+    <button onclick="previousTrack()">Previous Track</button>
+    <button onclick="toggleShuffle()">Shuffle</button>
+    <button onclick="toggleLoop()">Repeat</button>
+    <button onclick="changeVolume(0.1)">Volume Up</button>
+    <button onclick="changeVolume(-0.1)">Volume Down</button>
+
+    <br /><br />
     <button id="toggleButton" onclick="toggleListening()">
       Start Listening
     </button>
+
+    <script src="assets/js/script.js"></script>
   </body>
-  <script src="assets/js/script.js"></script>
 </html>
