@@ -6,6 +6,8 @@ recognition.lang = "en-US";
 recognition.continuous = true;
 recognition.interimResults = false;
 
+let isListening = false; // Flag to track the listening state
+
 // Create an array with the filenames of your music files
 const musicFiles = [
   "assets/music/Asake - Dull.mp3",
@@ -92,12 +94,24 @@ function speak(text) {
   }
 }
 
+function toggleListening() {
+  if (isListening) {
+    stopListening();
+  } else {
+    startListening();
+  }
+}
+
 function startListening() {
   recognition.start();
+  isListening = true;
+  document.getElementById("toggleButton").textContent = "Stop Listening";
   console.log("Voice recognition started.");
 }
 
 function stopListening() {
   recognition.stop();
+  isListening = false;
+  document.getElementById("toggleButton").textContent = "Start Listening";
   console.log("Voice recognition stopped.");
 }
