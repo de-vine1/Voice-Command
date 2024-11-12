@@ -38,14 +38,18 @@ recognition.onresult = (event) => {
     .trim()
     .toLowerCase();
 
+  console.log("Command heard: " + command); // Log the recognized command
+
   if (!isSpeaking) {
     // Ensure speak is only called once
     handleCommand(command);
     stopListening(); // Stop listening automatically after processing the command
   }
 };
-
+//Function for all commands
 function handleCommand(command) {
+  console.log("Handling command: " + command);
+
   if (command.includes("play")) {
     playMusic();
   } else if (command.includes("pause")) {
@@ -59,20 +63,23 @@ function handleCommand(command) {
   } else if (command.includes("enable repeat") || command.includes("loop")) {
     toggleLoop();
   } else if (command.includes("volume up")) {
-    adjustVolume(command, 1); // Increase volume
+    adjustVolume(command, 1);
   } else if (command.includes("volume down")) {
-    adjustVolume(command, -1); // Decrease volume
+    adjustVolume(command, -1);
   } else {
     speak("Command not recognized.");
+    console.log("Unrecognized command: " + command);
   }
 }
 
 function playMusic() {
+  console.log("Playing music."); // Log when music is played
   audio.play();
   speak("Playing music.");
 }
 
 function pauseMusic() {
+  console.log("Pausing music."); // Log when music is paused
   audio.pause();
   speak("Music paused.");
 }
@@ -80,8 +87,10 @@ function pauseMusic() {
 function nextTrack() {
   if (isShuffling) {
     currentTrackIndex = Math.floor(Math.random() * musicFiles.length);
+    console.log("Shuffling to next track: " + musicFiles[currentTrackIndex]); // Log shuffle action
   } else {
     currentTrackIndex = (currentTrackIndex + 1) % musicFiles.length;
+    console.log("Playing next track: " + musicFiles[currentTrackIndex]); // Log next track action
   }
   audio.src = musicFiles[currentTrackIndex];
   audio.play();
@@ -91,6 +100,7 @@ function nextTrack() {
 function previousTrack() {
   currentTrackIndex =
     (currentTrackIndex - 1 + musicFiles.length) % musicFiles.length;
+  console.log("Playing previous track: " + musicFiles[currentTrackIndex]); // Log previous track action
   audio.src = musicFiles[currentTrackIndex];
   audio.play();
   speak("Previous track.");
@@ -98,28 +108,38 @@ function previousTrack() {
 
 function toggleShuffle() {
   isShuffling = !isShuffling;
+  console.log(isShuffling ? "Shuffle mode enabled." : "Shuffle mode disabled."); // Log shuffle toggle
   speak(isShuffling ? "Shuffle mode enabled." : "Shuffle mode disabled.");
 }
 
 function toggleLoop() {
   isLooping = !isLooping;
   audio.loop = isLooping;
-  speak(isLooping ? "Repeat mode enabled." : "Repeat mode disabled.");
+  console.log(
+    isLooping ? "Repeat mode is enabled." : "Repeat mode is disabled."
+  ); // Log loop toggle
+  speak(isLooping ? "Repeat mode is enabled." : "Repeat mode is disabled.");
 }
 
 function adjustVolume(command, direction) {
-  // Extract the percentage from the command (e.g., "volume up by 50%")
+  console.log(
+    "Adjusting volume. Command: " + command + ", Direction: " + direction
+  ); // Log volume adjustment
+
+  // Extract the percentage from the command
   const percentageMatch = command.match(/(\d+)%/);
 
   if (percentageMatch) {
     let percentage = parseInt(percentageMatch[1], 10);
-    percentage = Math.min(Math.max(percentage, 0), 100); // Clamp between 0 and 100
+    percentage = Math.min(Math.max(percentage, 0), 100);
     let volumeChange = (percentage / 100) * direction; // Calculate the volume change
 
     // Update the audio volume
     audio.volume = Math.min(Math.max(audio.volume + volumeChange, 0), 1); // Ensure volume stays within 0-1 range
+    console.log(`Volume adjusted to: ${Math.round(audio.volume * 100)}%`);
     speak(`Volume is now ${Math.round(audio.volume * 100)} percent.`);
   } else {
+    console.log("Volume change failed. No percentage specified."); // Log if volume percentage is not specified
     speak("Please specify a percentage for the volume change.");
   }
 }
@@ -158,6 +178,7 @@ function speak(text) {
       isSpeaking = false;
     };
 
+    console.log("Speaking: " + text); // Log the speech output
     window.speechSynthesis.speak(utterance);
   }
 }
