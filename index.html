@@ -2,39 +2,81 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MusicMate</title>
-    <link rel="stylesheet" href="assets\css\styles.css" />
+    <!-- Add Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
 
-  <body>
-    <h1>MusicMate</h1>
+  <body
+    class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card text-center p-4" style="width: 70%; max-width: 800px">
+      <div class="card-body">
+        <!-- Title -->
+        <h1 class="card-title mb-3">MusicMate</h1>
 
-    <!-- Toggle button for listening -->
+        <!-- Now Playing Section -->
+        <h3>Now Playing: <span id="track-name">Asake - Dull</span></h3>
 
-    <br /><br />
+        <!-- Album Art (Optional) -->
+        <div class="album-art mb-3">
+          <img
+            id="album-art"
+            class="img-fluid rounded"
+            src="assets/images/default.jpg"
+            alt="Album Art" />
+        </div>
 
-    <div>
-      <h3>Now Playing: <span id="track-name">Asake - Dull</span></h3>
-      <!-- Progress bar for track duration -->
-      <progress id="progress-bar" value="0" max="100"></progress>
-      <p>
-        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
-      </p>
+        <!-- Progress bar for track duration -->
+        <progress
+          id="progress-bar"
+          class="w-100"
+          value="0"
+          max="100"></progress>
+        <p>
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        </p>
+
+        <!-- Optional control buttons -->
+        <div class="mb-3">
+          <button class="btn btn-secondary" onclick="previousTrack()">
+            Previous
+          </button>
+          <button class="btn btn-primary" onclick="nextTrack()">
+            Next Track
+          </button>
+          <button class="btn btn-warning" onclick="toggleShuffle()">
+            Shuffle
+          </button>
+          <button class="btn btn-info" onclick="toggleLoop()">Repeat</button>
+        </div>
+
+        <!-- Volume control buttons -->
+        <div class="mb-3">
+          <button class="btn btn-success" onclick="changeVolume(0.1)">
+            Volume Up
+          </button>
+          <button class="btn btn-danger" onclick="changeVolume(-0.1)">
+            Volume Down
+          </button>
+        </div>
+
+        <!-- Toggle Listening Button -->
+        <button
+          id="toggleButton"
+          class="btn btn-dark"
+          onclick="toggleListening()">
+          Start Listening
+        </button>
+      </div>
     </div>
 
-    <!-- Optional control buttons -->
-    <button onclick="nextTrack()">Next Track</button>
-    <button onclick="previousTrack()">Previous Track</button>
-    <button onclick="toggleShuffle()">Shuffle</button>
-    <button onclick="toggleLoop()">Repeat</button>
-    <button onclick="changeVolume(0.1)">Volume Up</button>
-    <button onclick="changeVolume(-0.1)">Volume Down</button>
-
-    <br /><br />
-    <button id="toggleButton" onclick="toggleListening()">
-      Start Listening
-    </button>
-
+    <!-- Add Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/script.js"></script>
   </body>
 </html>
