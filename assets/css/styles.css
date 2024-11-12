@@ -1,21 +1,23 @@
 body {
   font-family: Arial, sans-serif;
-  text-align: center;
 }
 
-#progress-bar {
-  width: 80%;
+.card {
+  width: 70%;
+  max-width: 800px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#album-art {
+  width: 100%;
+  height: auto;
+}
+
+#track-name {
+  font-size: 1.2rem;
+}
+
+.progress {
   margin-top: 10px;
-}
-
-#current-time,
-#duration {
-  font-size: 1.2em;
-}
-
-button {
-  padding: 10px 20px;
-  margin: 10px;
-  font-size: 16px;
-  cursor: pointer;
 }
