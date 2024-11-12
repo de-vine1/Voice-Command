@@ -1,0 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.card {
+  width: 70%;
+  max-width: 800px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.album-art img {
+  width: 100%;
+  height: auto;
+}
+
+.progress {
+  margin-top: 10px;
+}
+
+.btn {
+  margin: 5px;
+}

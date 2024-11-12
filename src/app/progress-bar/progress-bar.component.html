@@ -1,0 +1,7 @@
+<progress
+  id="progress-bar"
+  class="w-100"
+  [value]="currentTime"
+  [max]="duration"
+></progress>
+<p>{{ currentTime | timeFormat }} / {{ duration | timeFormat }}</p>
