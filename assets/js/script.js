@@ -1,3 +1,9 @@
+// Access clientId and clientSecret from the CONFIG object
+const clientId = CONFIG.CLIENT_ID;
+const clientSecret = CONFIG.CLIENT_SECRET;
+
+console.log("Client ID and Client Secret loaded from environment variables.");
+
 // Initialize SpeechRecognition
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -11,28 +17,85 @@ let isSpeaking = false; // Flag to prevent multiple speech outputs
 let isShuffling = false; // Flag for shuffle mode
 let isLooping = false; // Flag for loop/repeat mode
 
-// Create an array with the filenames of your music files
-const musicFiles = [
-  "assets/music/Asake - Dull.mp3",
-  "assets/music/Asake - Dupe.mp3",
-  "assets/music/Asake - Joha.mp3",
-  "assets/music/Asake - Muse.mp3",
-  "assets/music/Asake - Nzaza.mp3",
-  "assets/music/Asake - Organise.mp3",
-  "assets/music/Asake - Ototo.mp3",
-  "assets/music/Asake - Sunmomi.mp3",
-  "assets/music/Asake ft. Russ - Reason.mp3",
-  "assets/music/Asake_-_Peace_Be_Unto_You.mp3",
-  "assets/music/Asake-Terminator (1).mp3",
-  "assets/music/Asake-Terminator.mp3",
-];
-
 let currentTrackIndex = 0;
+let currentTrackId = ""; // Store the Spotify track ID for current track
 
-// Set initial audio source
-const audio = new Audio(musicFiles[currentTrackIndex]);
+// Spotify API credentials and endpoints
+const spotifyApiUrl = "https://api.spotify.com/v1/me/player/";
 
-// Function to auto stop listening after command is heard
+let accessToken = ""; // Declare the access token variable
+
+// Function to get the access token using client credentials flow
+function getAccessToken() {
+  console.log("Attempting to get access token...");
+
+  const auth = "Basic " + btoa(clientId + ":" + clientSecret);
+  console.log("Authorization header generated");
+
+  return fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    headers: {
+      Authorization: auth,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.access_token) {
+        console.log("Access Token received");
+        accessToken = data.access_token; // Set the access token globally
+      } else {
+        throw new Error("Unable to get access token");
+      }
+    })
+    .catch((error) => {
+      console.error("Error getting access token:", error);
+    });
+}
+
+// Function to authenticate and get Spotify access token
+async function authenticateSpotify() {
+  await getAccessToken(); // Fetch the access token
+  if (accessToken) {
+    console.log("Spotify authentication successful.");
+  } else {
+    console.error("Spotify authentication failed.");
+  }
+}
+
+// Create an instance for Spotify player control
+const spotifyPlayer = new Audio();
+
+// Function to fetch the current track info from Spotify
+function fetchSpotifyTrack() {
+  fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data && data.item) {
+        currentTrackId = data.item.id;
+        currentTrackIndex = data.item.track_number - 1; // Use track number for index
+        spotifyPlayer.src = data.item.preview_url; // Use the preview URL or full URL
+        console.log(
+          `Now playing: ${data.item.name} by ${data.item.artists[0].name}`
+        );
+      } else {
+        console.error("No current track available.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching Spotify track:", error);
+    });
+}
+
+// Start listening for voice commands
 recognition.onresult = (event) => {
   const command = event.results[event.results.length - 1][0].transcript
     .trim()
@@ -41,12 +104,12 @@ recognition.onresult = (event) => {
   console.log("Command heard: " + command); // Log the recognized command
 
   if (!isSpeaking) {
-    // Ensure speak is only called once
     handleCommand(command);
     stopListening(); // Stop listening automatically after processing the command
   }
 };
-//Function for all commands
+
+// Function to handle commands
 function handleCommand(command) {
   console.log("Handling command: " + command);
 
@@ -74,13 +137,13 @@ function handleCommand(command) {
 
 function playMusic() {
   console.log("Playing music."); // Log when music is played
-  audio.play();
+  spotifyPlayer.play();
   speak("Playing music.");
 }
 
 function pauseMusic() {
   console.log("Pausing music."); // Log when music is paused
-  audio.pause();
+  spotifyPlayer.pause();
   speak("Music paused.");
 }
 
@@ -92,8 +155,10 @@ function nextTrack() {
     currentTrackIndex = (currentTrackIndex + 1) % musicFiles.length;
     console.log("Playing next track: " + musicFiles[currentTrackIndex]); // Log next track action
   }
-  audio.src = musicFiles[currentTrackIndex];
-  audio.play();
+
+  // Fetch and play next track from Spotify
+  fetchSpotifyTrack();
+  spotifyPlayer.play();
   speak("Next track.");
 }
 
@@ -101,8 +166,10 @@ function previousTrack() {
   currentTrackIndex =
     (currentTrackIndex - 1 + musicFiles.length) % musicFiles.length;
   console.log("Playing previous track: " + musicFiles[currentTrackIndex]); // Log previous track action
-  audio.src = musicFiles[currentTrackIndex];
-  audio.play();
+
+  // Fetch and play previous track from Spotify
+  fetchSpotifyTrack();
+  spotifyPlayer.play();
   speak("Previous track.");
 }
 
@@ -114,7 +181,7 @@ function toggleShuffle() {
 
 function toggleLoop() {
   isLooping = !isLooping;
-  audio.loop = isLooping;
+  spotifyPlayer.loop = isLooping;
   console.log(
     isLooping ? "Repeat mode is enabled." : "Repeat mode is disabled."
   ); // Log loop toggle
@@ -126,7 +193,6 @@ function adjustVolume(command, direction) {
     "Adjusting volume. Command: " + command + ", Direction: " + direction
   ); // Log volume adjustment
 
-  // Extract the percentage from the command
   const percentageMatch = command.match(/(\d+)%/);
 
   if (percentageMatch) {
@@ -134,10 +200,14 @@ function adjustVolume(command, direction) {
     percentage = Math.min(Math.max(percentage, 0), 100);
     let volumeChange = (percentage / 100) * direction; // Calculate the volume change
 
-    // Update the audio volume
-    audio.volume = Math.min(Math.max(audio.volume + volumeChange, 0), 1); // Ensure volume stays within 0-1 range
-    console.log(`Volume adjusted to: ${Math.round(audio.volume * 100)}%`);
-    speak(`Volume is now ${Math.round(audio.volume * 100)} percent.`);
+    spotifyPlayer.volume = Math.min(
+      Math.max(spotifyPlayer.volume + volumeChange, 0),
+      1
+    ); // Ensure volume stays within 0-1 range
+    console.log(
+      `Volume adjusted to: ${Math.round(spotifyPlayer.volume * 100)}%`
+    );
+    speak(`Volume is now ${Math.round(spotifyPlayer.volume * 100)} percent.`);
   } else {
     console.log("Volume change failed. No percentage specified."); // Log if volume percentage is not specified
     speak("Please specify a percentage for the volume change.");
@@ -149,13 +219,12 @@ function updateTrackProgress() {
   const currentTimeDisplay = document.getElementById("current-time");
   const durationDisplay = document.getElementById("duration");
 
-  audio.addEventListener("timeupdate", () => {
-    const progress = (audio.currentTime / audio.duration) * 100;
+  spotifyPlayer.addEventListener("timeupdate", () => {
+    const progress = (spotifyPlayer.currentTime / spotifyPlayer.duration) * 100;
     progressBar.value = progress;
 
-    // Format the current time and duration
-    const currentTimeFormatted = formatTime(audio.currentTime);
-    const durationFormatted = formatTime(audio.duration);
+    const currentTimeFormatted = formatTime(spotifyPlayer.currentTime);
+    const durationFormatted = formatTime(spotifyPlayer.duration);
 
     currentTimeDisplay.textContent = currentTimeFormatted;
     durationDisplay.textContent = durationFormatted;
@@ -163,47 +232,39 @@ function updateTrackProgress() {
 }
 
 function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  const minutes = Math.floor(seconds / 60);
+  const secondsRemaining = Math.floor(seconds % 60);
+  return `${minutes}:${secondsRemaining.toString().padStart(2, "0")}`;
 }
 
-function speak(text) {
-  if (!isSpeaking) {
-    isSpeaking = true; // Set flag to prevent multiple calls
-    const utterance = new SpeechSynthesisUtterance(text);
+function speak(message) {
+  if (isSpeaking) return;
 
-    // When speech ends, reset the flag
-    utterance.onend = () => {
-      isSpeaking = false;
-    };
+  isSpeaking = true;
 
-    console.log("Speaking: " + text); // Log the speech output
-    window.speechSynthesis.speak(utterance);
-  }
-}
-
-function toggleListening() {
-  if (isListening) {
-    stopListening();
-  } else {
-    startListening();
-  }
+  const speech = new SpeechSynthesisUtterance(message);
+  speech.onend = () => (isSpeaking = false);
+  window.speechSynthesis.speak(speech);
 }
 
 function startListening() {
-  recognition.start();
-  isListening = true;
-  document.getElementById("toggleButton").textContent = "Stop Listening";
-  console.log("Voice recognition started.");
+  if (!isListening) {
+    recognition.start();
+    isListening = true;
+    console.log("Voice recognition started.");
+    speak("Listening for commands...");
+  }
 }
 
 function stopListening() {
-  recognition.stop();
-  isListening = false;
-  document.getElementById("toggleButton").textContent = "Start Listening";
-  console.log("Voice recognition stopped.");
+  if (isListening) {
+    recognition.stop();
+    isListening = false;
+    console.log("Voice recognition stopped.");
+  }
 }
 
-// Initialize track progress update
-updateTrackProgress();
+// Initialize the app
+authenticateSpotify().then(() => {
+  fetchSpotifyTrack();
+});
