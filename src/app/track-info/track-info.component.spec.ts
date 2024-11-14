@@ -8,9 +8,8 @@ describe('TrackInfoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TrackInfoComponent]
-    })
-    .compileComponents();
+      imports: [TrackInfoComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TrackInfoComponent);
     component = fixture.componentInstance;

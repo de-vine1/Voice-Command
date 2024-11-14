@@ -1,17 +1,8 @@
-<div class="card text-center p-4" style="width: 70%; max-width: 800px">
-  <div class="card-body">
-    <h1 class="card-title mb-3">MusicMate</h1>
-    <app-track-info></app-track-info>
-    <app-progress-bar></app-progress-bar>
-    <div class="mb-3">
-      <button class="btn btn-secondary" (click)="previousTrack()">
-        Previous
-      </button>
-      <button class="btn btn-primary" (click)="nextTrack()">Next Track</button>
-      <button class="btn btn-warning" (click)="toggleShuffle()">Shuffle</button>
-      <button class="btn btn-info" (click)="toggleLoop()">Repeat</button>
-    </div>
-    <app-volume-control></app-volume-control>
-    <app-voice-control></app-voice-control>
-  </div>
+<div>
+  <button (click)="previousTrack()">Previous</button>
+  <button (click)="playMusic()">Play</button>
+  <button (click)="pauseMusic()">Pause</button>
+  <button (click)="nextTrack()">Next</button>
+  <button (click)="toggleShuffle()">Shuffle</button>
+  <button (click)="toggleLoop()">Loop</button>
 </div>

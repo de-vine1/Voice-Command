@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-track-info',
@@ -7,6 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./track-info.component.css'],
 })
 export class TrackInfoComponent {
-  trackName = 'Asake - Dull';
-  albumArt = 'assets/images/default.jpg';
+  @Input() trackName: string = '';
 }

@@ -1,35 +1,56 @@
 import { Component } from '@angular/core';
-import { TrackInfoComponent } from '../track-info/track-info.component';
-import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
-import { VolumeControlComponent } from '../volume-control/volume-control.component';
-import { VoiceControlComponent } from '../voice-control/voice-control.component';
+import { MusicService } from '../services/music-service.service'; // Make sure this import is correct
 
 @Component({
   selector: 'app-music-player',
   standalone: true,
-  imports: [
-    TrackInfoComponent,
-    ProgressBarComponent,
-    VolumeControlComponent,
-    VoiceControlComponent,
-  ],
   templateUrl: './music-player.component.html',
   styleUrls: ['./music-player.component.css'],
 })
 export class MusicPlayerComponent {
-  isShuffling = false;
-  isLooping = false;
+  musicFiles: string[] = [];
+  currentTrackIndex: number = 0;
+  isShuffling: boolean = false;
+  isLooping: boolean = false;
+
+  constructor(private musicService: MusicService) {
+    // Get music files from the MusicService
+    this.musicFiles = this.musicService.musicFiles;
+    // Optionally, set the initial track
+    this.musicService.setTrack(this.currentTrackIndex);
+  }
+
+  // Use MusicService methods to control playback
+  playMusic() {
+    this.musicService.playMusic().catch((error) => {
+      console.error('Error playing audio:', error);
+      alert('There was an issue playing the music file.');
+    });
+  }
+
+  pauseMusic() {
+    this.musicService.pauseMusic();
+  }
+
+  nextTrack() {
+    this.musicService.nextTrack();
+  }
 
   previousTrack() {
-    console.log('Previous track');
+    this.musicService.previousTrack();
   }
-  nextTrack() {
-    console.log('Next track');
-  }
+
   toggleShuffle() {
     this.isShuffling = !this.isShuffling;
+    this.musicService.toggleShuffle();
   }
+
   toggleLoop() {
     this.isLooping = !this.isLooping;
+    this.musicService.toggleLoop();
+  }
+
+  adjustVolume(direction: number) {
+    this.musicService.adjustVolume(direction);
   }
 }

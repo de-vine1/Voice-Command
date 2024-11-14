@@ -8,9 +8,8 @@ describe('VoiceControlComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VoiceControlComponent]
-    })
-    .compileComponents();
+      imports: [VoiceControlComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(VoiceControlComponent);
     component = fixture.componentInstance;

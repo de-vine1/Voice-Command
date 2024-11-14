@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 export class VolumeControlComponent {
   audio = new Audio();
 
-  changeVolume(direction: number) {
-    this.audio.volume = Math.min(Math.max(this.audio.volume + direction, 0), 1);
+  changeVolume(amount: number) {
+    this.audio.volume = Math.min(Math.max(this.audio.volume + amount, 0), 1);
   }
 }
