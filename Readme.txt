@@ -8,3 +8,5 @@ I'd also be logging in progress with dates into this file...
 - ** 11/Nov/2024 10:25am : Project started, currently trying to fix an issue with the voice regognition as it listens to the music and confuses it for voice commands
 - ** 11/Nov/2024 10:40am : Added a new function to stop listening for command after a command has been passed
 - ** 11/Nov/2024 11:10am : Added a new function for looping, shuffling and volume control, also added some ui styling and made some updates
+- ** 12/Nov/2024 12:00pm : Started converting into a framework, still finding it hard to do and still trying to make it work, LOL.... I'd definitely get it though
+- ** 13/Nov/2024 07:30pm : Integrated spotify Api initial set up, testing all voice commands checked!
