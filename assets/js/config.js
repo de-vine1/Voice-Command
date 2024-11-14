@@ -1,0 +1,5 @@
+// config.js
+const CONFIG = {
+  CLIENT_ID: "c2d639575b224fd3840d6af8740b1319",
+  CLIENT_SECRET: "f5159d10d09f481791043cfb5722b2e1",
+};
